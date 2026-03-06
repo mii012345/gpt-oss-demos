@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>gpt-oss:20b Demos</title>
+<style>
+:root{--bg:#0d1117;--card:#161b22;--border:#30363d;--text:#e6edf3;--accent:#58a6ff;--sub:#8b949e}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:40px 20px}
+h1{font-size:2rem;margin-bottom:8px}
+.sub{color:var(--sub);margin-bottom:40px;text-align:center;max-width:600px;line-height:1.6}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;max-width:960px;width:100%}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;text-decoration:none;color:var(--text);transition:border-color .2s,transform .2s}
+.card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.card h2{font-size:1.2rem;margin-bottom:8px}
+.card p{color:var(--sub);font-size:.9rem;line-height:1.5;margin-bottom:12px}
+.meta{display:flex;gap:16px;font-size:.8rem;color:var(--sub)}
+.meta span{display:flex;align-items:center;gap:4px}
+.badge{display:inline-block;background:var(--accent);color:var(--bg);font-size:.75rem;font-weight:600;padding:2px 8px;border-radius:4px;margin-bottom:12px}
+footer{margin-top:60px;color:var(--sub);font-size:.85rem;text-align:center;line-height:1.6}
+footer a{color:var(--accent);text-decoration:none}
+</style>
+</head>
+<body>
+<h1>gpt-oss:20b Demos</h1>
+<p class="sub">OpenAIのオープンウェイトモデル gpt-oss:20b が77秒で生成した3本のWebアプリ。全コードをLLMが書き、人間はハーネス（安全装置）だけ用意した。</p>
+
+<div class="cards">
+  <a href="todo/" class="card">
+    <span class="badge">Level 1 - 36秒</span>
+    <h2>Todo App</h2>
+    <p>追加・削除・完了、フィルター（All/Active/Completed）、localStorage永続化、ダークモード切替。</p>
+    <div class="meta">
+      <span>2回のAPI呼び出し</span>
+      <span>1,980 tokens</span>
+      <span>7/8</span>
+    </div>
+  </a>
+
+  <a href="pomodoro/" class="card">
+    <span class="badge">Level 2 - 12秒</span>
+    <h2>Pomodoro Timer</h2>
+    <p>25分/5分サイクル、SVGプログレスリング、Web Audio APIビープ音、セッションカウンター。</p>
+    <div class="meta">
+      <span>2回のAPI呼び出し</span>
+      <span>1,240 tokens</span>
+      <span>9/11</span>
+    </div>
+  </a>
+
+  <a href="markdown-notes/" class="card">
+    <span class="badge">Level 3 - 29秒</span>
+    <h2>Markdown Notes</h2>
+    <p>サイドバー付きノート一覧、マークダウンエディタ+ライブプレビュー、検索、エクスポート、キーボードショートカット。</p>
+    <div class="meta">
+      <span>2回のAPI呼び出し</span>
+      <span>3,111 tokens</span>
+      <span>11/12</span>
+    </div>
+  </a>
+</div>
+
+<footer>
+  gpt-oss:20b (MoE, 20.9B params / 3.6B active) on RTX 4080<br>
+  <a href="https://zenn.dev/seeda_yuto/articles/local-llm-agent-harness-guide">記事を読む</a>
+</footer>
+</body>
+</html>

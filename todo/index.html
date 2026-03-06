@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Todo App</title>
+<style>
+:root{--bg:#fff;--text:#000;--accent:#6200ee}
+[data-theme=dark]{--bg:#121212;--text:#e0e0e0;--accent:#bb86fc}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;min-height:100vh}
+header{display:flex;justify-content:space-between;align-items:center;padding:1rem;background:var(--accent);color:#fff}
+header h1{margin:0;font-size:1.5rem}
+#darkToggle{background:transparent;border:none;color:#fff;font-size:1rem;cursor:pointer}
+main{flex:1;padding:1rem}
+#newTodo{width:100%;padding:.5rem;font-size:1rem;margin-bottom:.5rem}
+ul{list-style:none;padding:0;margin:0}
+li{display:flex;align-items:center;padding:.5rem;border-bottom:1px solid #ccc}
+li.completed span{text-decoration:line-through;color:gray}
+button{background:transparent;border:none;color:var(--accent);cursor:pointer;margin-left:auto}
+.filter{display:flex;justify-content:center;margin-top:1rem}
+.filter button{margin:0 .5rem;background:transparent;border:none;color:var(--accent);cursor:pointer}
+@media(max-width:600px){header{flex-direction:column;align-items:flex-start}}
+</style>
+</head>
+<body data-theme="light">
+<header>
+<h1>Todo</h1>
+<button id="darkToggle">Dark</button>
+</header>
+<main>
+<input id="newTodo" placeholder="What needs to be done?">
+<ul id="todoList"></ul>
+<div class="filter">
+<button data-filter="all">All</button>
+<button data-filter="active">Active</button>
+<button data-filter="completed">Completed</button>
+</div>
+</main>
+<script>
+const STORAGE_KEY='todos';
+let todos=[];
+let filter='all';
+function load(){todos=JSON.parse(localStorage.getItem(STORAGE_KEY))||[];}
+function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(todos));}
+function render(){
+const list=document.getElementById('todoList');
+list.innerHTML='';
+
+todos.filter(t=>filter==='all'||(filter==='active'&&!t.completed)|| (filter==='completed'&&t.completed))
+.forEach(t=>{
+const li=document.createElement('li');
+li.className=t.completed?'completed':'';
+const span=document.createElement('span');span.textContent=t.text;
+const del=document.createElement('button');del.textContent='✕';
+del.onclick=e=>{e.stopPropagation();todos=todos.filter(x=>x!==t);save();render();}
+li.onclick=e=>{t.completed=!t.completed;save();render();}
+li.appendChild(span);li.appendChild(del);list.appendChild(li);
+});
+}
+document.getElementById('newTodo').addEventListener('keydown',e=>{
+if(e.key==='Enter'){const txt=e.target.value.trim();if(txt){todos.push({text:txt,completed:false});e.target.value='';save();render();}}
+});
+document.querySelectorAll('.filter button').forEach(b=>{
+b.onclick=e=>{filter=e.target.dataset.filter;render();}
+});
+document.getElementById('darkToggle').onclick=e=>{
+const body=document.body;
+const theme=body.dataset.theme==='light'?'dark':'light';
+body.dataset.theme=theme;
+e.target.textContent=theme==='light'?'Dark':'Light';
+};
+load();render();
+</script>
+</body>
+</html>

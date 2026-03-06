@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Markdown Notes</title>
+<style>
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#121212;color:#e0e0e0;}
+#app{display:flex;height:100vh;}
+#sidebar{width:250px;background:#1e1e1e;overflow:auto;}
+#sidebar.collapsed{display:none;}
+#sidebar header{padding:10px;background:#2e2e2e;}
+#sidebar ul{list-style:none;margin:0;padding:0;}
+#sidebar li{padding:8px 10px;cursor:pointer;}
+#sidebar li:hover{background:#3e3e3e;}
+#sidebar li.active{background:#4e4e4e;}
+#sidebar button{margin:5px;}
+#main{flex:1;display:flex;flex-direction:column;}
+#toolbar{display:flex;align-items:center;background:#1e1e1e;padding:5px;}
+#toolbar input{flex:1;margin-right:5px;}
+#editor{flex:1;display:flex;}
+textarea{flex:1;background:#121212;color:#e0e0e0;border:none;padding:10px;font-family:monospace;}
+.preview{flex:1;background:#121212;color:#e0e0e0;padding:10px;overflow:auto;}
+@media(max-width:600px){#sidebar{position:absolute;z-index:10;left:0;top:0;height:100%;}#sidebar.collapsed{display:none;}}
+</style>
+</head>
+<body>
+<div id="app">
+<div id="sidebar">
+<header>
+<button id="new">New</button>
+<button id="del">Del</button>
+<button id="rename">Rename</button>
+<button id="export">Export</button>
+<input type="text" id="search" placeholder="Search">
+</header>
+<ul id="list"></ul>
+</div>
+<div id="main">
+<div id="toolbar">
+<input type="text" id="title" placeholder="Title">
+</div>
+<div id="editor">
+<textarea id="content"></textarea>
+<div id="preview" class="preview"></div>
+</div>
+</div>
+</div>
+<script>
+const notesKey='mdnotes';let notes=[],current=0;
+function load(){notes=JSON.parse(localStorage.getItem(notesKey))||[];renderList();if(notes.length)select(0);}
+function save(){localStorage.setItem(notesKey,JSON.stringify(notes));}
+function renderList(){const ul=document.getElementById('list');ul.innerHTML='';notes.forEach((n,i)=>{const li=document.createElement('li');li.textContent=n.title;li.onclick=()=>select(i);li.className=i===current?'active':'';ul.appendChild(li);});}
+function select(i){current=i;document.getElementById('title').value=notes[i].title;document.getElementById('content').value=notes[i].content;preview();renderList();}
+function preview(){const txt=document.getElementById('content').value;document.getElementById('preview').innerHTML=mdToHtml(txt);}
+function mdToHtml(md){md=md.replace(/\n/g,'<br>');md=md.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');md=md.replace(/\*(.+?)\*/g,'<i>$1</i>');md=md.replace(/`(.+?)`/g,'<code>$1</code>');md=md.replace(/```([\s\S]+?)```/g,'<pre>$1</pre>');md=md.replace(/\[([^\]]+)\]\(([^\)]+)\)/g,'<a href="$2">$1</a>');md=md.replace(/\n- (.+)/g,'<ul><li>$1</li></ul>');md=md.replace(/\n# (.+)/g,'<h1>$1</h1>');md=md.replace(/\n## (.+)/g,'<h2>$1</h2>');return md;}
+function newNote(){notes.push({title:'Untitled',content:''});save();select(notes.length-1);}
+function deleteNote(){if(notes.length){notes.splice(current,1);save();select(notes.length?0:undefined);}}
+function renameNote(){const name=prompt('New title',notes[current].title);if(name){notes[current].title=name;save();renderList();}}
+function exportNote(){const blob=new Blob([document.getElementById('content').value],{type:'text/markdown'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=notes[current].title+'.md';a.click();}
+document.addEventListener('DOMContentLoaded',()=>{load();document.getElementById('content').addEventListener('input',preview);document.getElementById('new').onclick=newNote;document.getElementById('del').onclick=deleteNote;document.getElementById('rename').onclick=renameNote;document.getElementById('export').onclick=exportNote;document.getElementById('search').addEventListener('input',e=>{const q=e.target.value.toLowerCase();const lis=document.querySelectorAll('#list li');lis.forEach((li,i)=>{li.style.display=notes[i].title.toLowerCase().includes(q)?'' :'none';});});document.addEventListener('keydown',e=>{if(e.ctrlKey&&e.key==='s'){e.preventDefault();save();}if(e.ctrlKey&&e.key==='n'){e.preventDefault();newNote();}});});
+</script>
+</body></html>
